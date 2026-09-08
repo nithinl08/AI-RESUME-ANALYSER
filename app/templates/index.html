@@ -1,1 +1,24 @@
-
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Resume Analyzer</title><link rel="stylesheet" href="{{ url_for('static', path='style.css') }}"></head>
+<body><main class="container">
+<header class="hero"><div><p class="eyebrow">PERSONAL AI PROJECT</p><h1>AI Resume Analyzer</h1>
+<p class="subtitle">Compare your resume with a job description and discover matching skills, gaps and improvement opportunities.</p></div>
+<div class="badge">Python · FastAPI · AI</div></header>
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+<section class="card"><form action="/analyze" method="post" enctype="multipart/form-data">
+<div class="form-grid"><div><label>Resume PDF</label><input name="resume" type="file" accept=".pdf,application/pdf" required><small>Maximum 10 MB</small></div>
+<div><label>Job Description</label><textarea name="job_description" placeholder="Paste the job description here..." required></textarea></div></div>
+<button type="submit">Analyze Resume</button></form></section>
+{% if result %}<section class="results">
+<div class="score card"><div class="ring">{{ result.score.overall }}%</div><div><p class="eyebrow">OVERALL MATCH</p><h2>{{ result.score.overall }}% match</h2><p>{{ result.resume_words }} resume words · {{ result.job_words }} job-description words</p></div></div>
+<div class="metrics"><div class="metric card"><span>Skill coverage</span><strong>{{ result.score.skill_score }}%</strong></div>
+<div class="metric card"><span>Keyword coverage</span><strong>{{ result.score.keyword_score }}%</strong></div>
+<div class="metric card"><span>Resume signal</span><strong>{{ result.score.readability_score }}%</strong></div></div>
+<div class="columns"><div class="card"><h3>Matched skills</h3><div class="chips">{% for x in result.matched %}<span class="chip success">{{x}}</span>{% else %}<p class="muted">None detected.</p>{% endfor %}</div></div>
+<div class="card"><h3>Missing skills</h3><div class="chips">{% for x in result.missing %}<span class="chip warning">{{x}}</span>{% else %}<p class="muted">None detected.</p>{% endfor %}</div></div>
+<div class="card"><h3>Additional skills</h3><div class="chips">{% for x in result.additional %}<span class="chip">{{x}}</span>{% else %}<p class="muted">None detected.</p>{% endfor %}</div></div></div>
+<div class="card"><h3>Improvement suggestions</h3><ol>{% for x in result.suggestions %}<li>{{x}}</li>{% endfor %}</ol></div>
+</section>{% endif %}
+<footer>Built as a personal portfolio project. The analyzer does not invent experience.</footer>
+</main></body></html>
